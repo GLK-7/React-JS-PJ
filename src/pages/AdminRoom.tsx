@@ -81,10 +81,17 @@ export function AdminRoom(){
 
     }
     async function handleLogout(){
-        await auth.signOut();
-        setUser(undefined);
-        history.push('/');
         
+        if(window.confirm('Tem certeza que deseja fazer o logout e voltar a página inicial?')){
+            await auth.signOut();
+            setUser(undefined);
+            handleBackHome();
+        }
+         
+    }
+
+    function handleBackHome(){
+        history.push('/');
     }
     
 
@@ -92,7 +99,7 @@ export function AdminRoom(){
         <div id="page-room">
             <header>
                 <div className="content">
-                    <img src={chatImg} alt="Letmeask" />
+                    <img onClick={handleBackHome} src={chatImg} alt="Takeaquestion" />
                     <div>
                         <RoomCode code={roomId}/>
                         {user?.id && (
