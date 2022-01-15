@@ -35,8 +35,25 @@ export function useRoom(roomId: string){
     const {user} = useAuth();
     const [questions, setQuestions] = useState<QuestionType[]>([]);
     const [title, setTitle] = useState('');
+    
+    
 
     useEffect(() => {
+        
+        function sortQ (a : QuestionType, b : QuestionType){
+            if (a.likeCount > b.likeCount){
+                return -1;
+            }else if(a.likeCount < b.likeCount){
+                return 1;
+            }
+            return 0;   
+        }
+    
+        function sortQuestionsByLike (questions:QuestionType[]){
+            const sortedQuestions = questions.sort(sortQ)
+            return sortedQuestions;
+        }
+        
         const roomRef = database.ref(`rooms/${roomId}`);
 
         roomRef.on('value',room =>{
@@ -57,8 +74,9 @@ export function useRoom(roomId: string){
                 }
             })
 
+            const sortedQuestions = sortQuestionsByLike(parsedQuestions)
             setTitle(databaseRoom.title)
-            setQuestions(parsedQuestions)
+            setQuestions(sortedQuestions)
         })
 
         return () => {
