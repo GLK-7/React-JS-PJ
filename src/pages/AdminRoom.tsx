@@ -28,11 +28,13 @@ export function AdminRoom(){
     const roomId = params.id;
     
     const {title, questions} = useRoom(roomId);
-    const {user} = useAuth();
+    const {user, setUser} = useAuth();
     
     
 
     async function handleEndRoom(){
+        if(!user?.id)
+            return
         database.ref(`rooms/${roomId}`).update({
             endedAt: new Date(),
         })
@@ -41,12 +43,16 @@ export function AdminRoom(){
     }
 
     async function handleDeleteQuestion(questionId: string){
+        if(!user?.id)
+            return
         if(window.confirm('Tem certeza que deseja excluir esta perguta?')){
             await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
         }
     }
 
     async function handleCheckQuestionAsAnswered(questionId: string){
+        if(!user?.id)
+            return
         await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
             isAnswered:true,
         })
@@ -59,6 +65,10 @@ export function AdminRoom(){
     }*/
     
     async function handleLikeQuestion(questionId:string, likeId:string | undefined) {
+        
+        if(!user?.id)
+            return
+
         if(likeId){
 
             await database.ref(`rooms/${roomId}/questions/${questionId}/likes/${likeId}`).remove()
@@ -71,7 +81,8 @@ export function AdminRoom(){
 
     }
     async function handleLogout(){
-        auth.signOut();
+        await auth.signOut();
+        setUser(undefined);
         history.push('/');
         
     }
@@ -84,8 +95,12 @@ export function AdminRoom(){
                     <img src={chatImg} alt="Letmeask" />
                     <div>
                         <RoomCode code={roomId}/>
-                        <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
-                        <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
+                        {user?.id && (
+                            <div className='logedButtons'>
+                                <Button isOutlined onClick={handleEndRoom}>Encerrar sala</Button>
+                                <ButtonLogout onClick={handleLogout}>Sair</ButtonLogout>
+                            </div>
+                        )}
                     </div>
                 </div>
             </header>

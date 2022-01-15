@@ -47,7 +47,7 @@ export function Home(){
         }
 
         
-        if(authorId === user?.id){
+        if(authorId === user?.id && user?.id){
             history.push(`admin/rooms/${roomCode}`); // Verificar se o admin esta acessando a sala
             return;
         }

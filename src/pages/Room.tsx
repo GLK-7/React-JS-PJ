@@ -8,13 +8,14 @@ import { useRoom } from '../hooks/useRoom';
 import { auth, database } from '../services/firebase';
 import '../styles/room.scss';
 import chatImg from '../assets/images/chat.png';
+import { ButtonLogout } from '../Components/ButtonLogout';
 
 type RoomParams = {
     id: string;
 }
 
 export function Room(){
-    const {user, signInWithGoogle} = useAuth();
+    const {user, setUser ,signInWithGoogle} = useAuth();
     const history = useHistory();
     const params = useParams<RoomParams>();
     const [newQuestion, setNewQuestion] = useState('');
@@ -55,6 +56,10 @@ export function Room(){
     }
 
     async function handleLikeQuestion(questionId:string, likeId:string | undefined) {
+        
+        if(!user?.id)
+            return
+        
         if(likeId){
 
             await database.ref(`rooms/${roomId}/questions/${questionId}/likes/${likeId}`).remove()
@@ -69,6 +74,7 @@ export function Room(){
 
     async function handleLogout(){
         auth.signOut();
+        setUser(undefined);
         history.push('/');
     }
 
@@ -77,8 +83,10 @@ export function Room(){
             <header>
                 <div className="content">
                     <img src={chatImg} alt="Letmeask" />
-                    <RoomCode code={roomId}/>
-                    <Button onClick={handleLogout}>Logout</Button>
+                    <div>
+                        <RoomCode code={roomId}/>
+                        <ButtonLogout onClick={handleLogout}>Sair</ButtonLogout>
+                    </div>
                 </div>
             </header>
 

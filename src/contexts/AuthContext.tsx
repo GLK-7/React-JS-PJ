@@ -1,17 +1,19 @@
+//import { promises } from 'fs';
 import {createContext, ReactNode, useState, useEffect} from 'react';
 import { auth, firebase } from '../services/firebase';
 
 
 type User = {
-    id: string;
-    name: string;
-    avatar: string;
-  }
+  id: string;
+  name: string;
+  avatar: string;
+}
   
-  type AuthContextType = {
-    user: User | undefined;
-    signInWithGoogle: () => Promise<void>;
-  }
+type AuthContextType = {
+  user: User | undefined;
+  setUser: (user: User | undefined) => void;
+  signInWithGoogle: () => Promise<void>;
+}
 
 type AuthContextProviderProps = {
     children: ReactNode;
@@ -21,7 +23,7 @@ export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthContextProvider(props: AuthContextProviderProps){
 
-    const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | undefined>();
 
   useEffect(()=>{
     const unsubscribe = auth.onAuthStateChanged(user =>{
@@ -68,7 +70,7 @@ export function AuthContextProvider(props: AuthContextProviderProps){
   }
 
     return(
-        <AuthContext.Provider value={{user, signInWithGoogle}}>
+        <AuthContext.Provider value={{user, setUser, signInWithGoogle}}>
             {props.children}
         </AuthContext.Provider>
     );
