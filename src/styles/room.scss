@@ -59,7 +59,7 @@
         }
     
         form {
-            textarea {
+            .question-input {
                 width: 100%;
                 border:0;
                 padding: 16px;
@@ -118,7 +118,8 @@
         }
     }
 
-}   
+}
+
 .footer {
     align-items: center;
     display: flex;

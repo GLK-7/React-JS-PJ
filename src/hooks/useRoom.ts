@@ -34,16 +34,13 @@ type QuestionType = {
 export function useRoom(roomId: string){
     const {user} = useAuth();
     const [questions, setQuestions] = useState<QuestionType[]>([]);
-    const [title, setTitle] = useState('');
-    
-    
+    const [title, setTitle] = useState('');    
 
     useEffect(() => {
-        
         function sortQ (a : QuestionType, b : QuestionType){
             if (a.likeCount > b.likeCount){
                 return -1;
-            }else if(a.likeCount < b.likeCount){
+            } else if(a.likeCount < b.likeCount){
                 return 1;
             }
             return 0;   
