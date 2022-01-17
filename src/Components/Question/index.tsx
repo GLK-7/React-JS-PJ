@@ -2,14 +2,17 @@ import { FormEvent, ReactNode, useState } from 'react'
 import cx from 'classnames';
 
 import answerImg from '../../assets/images/answer.svg';
-import './styles.scss';
 import { useAuth } from '../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import { database } from '../../services/firebase';
+import { Answer } from '../Answer';
+
+import './styles.scss';
 
 type QuestionProps = {
     id: string;
     content: string;
+    answers: AnswerProps[] | undefined;
     author:{
         name: string;
         avatar: string;
@@ -28,7 +31,8 @@ type AnswerProps = {
         avatar: string;
     }
 }
-//criado
+
+// Criado
 type RoomParams = {
     id: string;
 }
@@ -37,6 +41,7 @@ export function Question({
     id,
     content,
     author,
+    answers,
     isAnswered = false,
     isHighLighted = false,
     children
@@ -71,7 +76,7 @@ export function Question({
         await database.ref(`rooms/${roomId}/questions/${id}/answers`).push(answer);
         setNewAswer('');
     }
-    
+
     return(
         // Nesse caso foi usado a biblioteca classnames para a condicional
         <div className={cx(
@@ -117,6 +122,14 @@ export function Question({
                     </div>
                 </form>
             }
+
+            {answers && answers.map(answer => (
+                <Answer
+                    key={answer.id}
+                    content={answer.content}
+                    author={answer.author}
+                />
+            ))}
         </div>
     )
 }

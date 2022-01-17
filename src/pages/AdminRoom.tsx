@@ -124,6 +124,7 @@ export function AdminRoom(){
                                 key={question.id}
                                 id={question.id}
                                 content={question.content}
+                                answers={question.answers}
                                 author={question.author}
                                 isAnswered={question.isAnswered}
                                 isHighLighted={question.isHighLighted}

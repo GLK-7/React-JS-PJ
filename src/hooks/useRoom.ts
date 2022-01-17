@@ -3,19 +3,28 @@ import { useState } from "react";
 import { database } from "../services/firebase";
 import { useAuth } from "./useAuth";
 
+type Answers = {
+    id: string;
+    content: string;
+    author: {
+        name: string;
+        avatar: string;
+    }  
+}
+
 type FirebaseQuestions = Record<string, {
     author: {
         name: string;
         avatar: string;
     }
     content: string;
+    answers: Answers[] | undefined;
     isAnswered: boolean;
     isHighLighted: boolean;
-    likes:Record<string, {
+    likes: Record<string, {
         author: string;
         authorId: string;
-    }
-    >
+    }>
 }>
 
 type QuestionType = {
@@ -25,6 +34,7 @@ type QuestionType = {
         avatar: string;
     }
     content: string;
+    answers: Answers[] | undefined;
     isAnswered: boolean;
     isHighLighted: boolean;
     likeCount: number;
@@ -37,7 +47,7 @@ export function useRoom(roomId: string){
     const [title, setTitle] = useState('');    
 
     useEffect(() => {
-        function sortQ (a : QuestionType, b : QuestionType){
+        function sortQ (a: QuestionType, b: QuestionType){
             if (a.likeCount > b.likeCount){
                 return -1;
             } else if(a.likeCount < b.likeCount){
@@ -46,21 +56,41 @@ export function useRoom(roomId: string){
             return 0;   
         }
     
-        function sortQuestionsByLike (questions:QuestionType[]){
+        function sortQuestionsByLike (questions: QuestionType[]){
             const sortedQuestions = questions.sort(sortQ)
             return sortedQuestions;
         }
         
+        function parseAnswers(answers: Answers[] | undefined) {
+            if (answers === undefined)
+                return answers;
+
+            
+            const parsedAnswers = Object.entries(answers).map(([key, answerValue]) => {
+                return {
+                    id: key,
+                    content: answerValue.content,
+                    author: {
+                        name: answerValue.author.name,
+                        avatar: answerValue.author.avatar,
+                    }
+                }
+            });
+
+            return parsedAnswers;
+        }
+
         const roomRef = database.ref(`rooms/${roomId}`);
 
-        roomRef.on('value',room =>{
+        roomRef.on('value', room => {
             const databaseRoom = room.val();
             const firebaseQuestions: FirebaseQuestions = databaseRoom.questions  ?? {};
 
-            const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) =>{
+            const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
                 return{
                     id: key,
                     content: value.content,
+                    answers: parseAnswers(value.answers),
                     author: value.author,
                     isHighLighted: value.isHighLighted,
                     isAnswered: value.isAnswered,
@@ -71,9 +101,11 @@ export function useRoom(roomId: string){
                 }
             })
 
-            const sortedQuestions = sortQuestionsByLike(parsedQuestions)
-            setTitle(databaseRoom.title)
-            setQuestions(sortedQuestions)
+            const sortedQuestions = sortQuestionsByLike(parsedQuestions);
+            setTitle(databaseRoom.title);
+            setQuestions(sortedQuestions);
+
+            console.log(sortedQuestions);
         })
 
         return () => {
