@@ -2,7 +2,7 @@
 import {useHistory, useParams} from 'react-router-dom';
 
 import deleteImg from '../assets/images/delete.svg';
-import checkImg from '../assets/images/check.svg';
+// import checkImg from '../assets/images/check.svg';
 import { Button } from '../Components/Button';
 import { ButtonLogout } from '../Components/ButtonLogout';
 import { Question } from '../Components/Question';
@@ -14,6 +14,7 @@ import chatImg from '../assets/images/chat.png';
 import '../styles/room.scss';
 import { auth, database } from '../services/firebase';
 import { useAuth } from '../hooks/useAuth';
+import { FormEvent, useState } from 'react';
 
 type RoomParams = {
     id: string;
@@ -28,6 +29,33 @@ export function AdminRoom(){
     
     const {title, questions} = useRoom(roomId);
     const {user, setUser} = useAuth();
+    const [newQuestion, setNewQuestion] = useState('');
+    
+    async function handleSendQuestion(event: FormEvent){
+        event.preventDefault();
+        
+        if (newQuestion.trim() === ''){
+            return;
+        }
+
+        if (!user){
+           throw new Error('You must be logged in')
+        }
+
+        const question = {
+            content: newQuestion,
+            author:{
+                name:user?.name,
+                avatar: user.avatar
+            },
+            isHighLighted: false,
+            isAnswered: false
+        }
+        await database.ref(`rooms/${roomId}/questions`).push(question);
+
+        setNewQuestion('');
+    }
+
     
     
 
@@ -49,13 +77,13 @@ export function AdminRoom(){
         }
     }
 
-    async function handleCheckQuestionAsAnswered(questionId: string){
-        if(!user?.id)
-            return
-        await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
-            isAnswered:true,
-        })
-    }
+    // async function handleCheckQuestionAsAnswered(questionId: string){
+    //     if(!user?.id)
+    //         return
+    //     await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+    //         isAnswered:true,
+    //     })
+    // }
 
     /*async function handleHighlightQuestion(questionId: string){
         await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
@@ -116,6 +144,19 @@ export function AdminRoom(){
                     <h1>Sala {title}</h1>
                     {questions.length > 0 && <span>{questions.length} pergunta(s)</span>}
                 </div>
+                <form onSubmit={handleSendQuestion}>
+                    <textarea
+                        placeholder="O que voce quer perguntar?"
+                        onChange={event => setNewQuestion(event.target.value)}
+                        value={newQuestion}
+                        className='question-input'
+                    />
+
+
+                    <div className="form-footer">
+                        <Button type="submit"disabled={!user}>Enviar pergunta</Button>
+                    </div>           
+                </form>
 
                 <div className="question-list">
                     {questions.map(question =>{
@@ -132,12 +173,12 @@ export function AdminRoom(){
                                 <div className='footer'>
                                     {!question.isAnswered && (
                                         <>
-                                            <button
+                                            {/* <button
                                                 type="button"
                                                 onClick={() => handleCheckQuestionAsAnswered(question.id)}
                                             >
                                                 <img src={checkImg} alt="Marcar pergunta como respondida"></img>
-                                            </button>
+                                            </button> */}
                                         </>
                                         
                                     )}

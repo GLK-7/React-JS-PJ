@@ -6,7 +6,6 @@ import { useAuth } from '../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import { database } from '../../services/firebase';
 import { Answer } from '../Answer';
-
 import './styles.scss';
 
 type QuestionProps = {
@@ -53,6 +52,7 @@ export function Question({
     
     const [newAnswer, setNewAswer] = useState('');
     const [isAnswerOpen, setIsAnswerOpen] = useState(false);
+    const [isAnswersOpen, setIsAnswersOpen] = useState(false);
 
     async function handleSendAnswer(event: FormEvent) {
         event.preventDefault();
@@ -76,7 +76,7 @@ export function Question({
         await database.ref(`rooms/${roomId}/questions/${id}/answers`).push(answer);
         setNewAswer('');
     }
-
+  
     return(
         // Nesse caso foi usado a biblioteca classnames para a condicional
         <div className={cx(
@@ -121,15 +121,27 @@ export function Question({
                         </button>
                     </div>
                 </form>
+                
             }
+            {answers && <span onClick={() => setIsAnswersOpen(!isAnswersOpen)}><span>Respostas ({answers.length})</span></span>}
+            
+            { isAnswersOpen &&
 
-            {answers && answers.map(answer => (
-                <Answer
-                    key={answer.id}
-                    content={answer.content}
-                    author={answer.author}
-                />
-            ))}
+                <div>
+                    <br />
+                    {answers && answers.map(answer => (
+                        <div className='answerBlock'>
+                            <p className='answer'>
+                                <Answer
+                                    key={answer.id}
+                                    content={answer.content}
+                                    author={answer.author}
+                                />
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            }
         </div>
     )
 }
