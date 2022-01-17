@@ -2,7 +2,7 @@ import {Link, useHistory} from 'react-router-dom';
 import {FormEvent} from 'react';
 
 import illustrationImg from '../assets/images/illustration.svg';
-import logoImg from '../assets/images/logo.svg';
+import chatImg from '../assets/images/chat.png';
 //import googleIconImg from '../assets/images/google-icon.svg';
 
 import { Button } from '../Components/Button';
@@ -45,7 +45,7 @@ export function NewRoom(){
             <main>
 
                 <div className="main-content">
-                    <img src={logoImg} alt="Letmeask"/>
+                    <img src={chatImg} alt="Letmeask"/>
                     <h2>Criar uma nova sala</h2>
                     <div>
                         <form onSubmit={handleCreateRoom}>

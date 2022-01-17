@@ -48,6 +48,7 @@ export function Room() {
             isAnswered: false
         }
 
+       
         await database.ref(`rooms/${roomId}/questions`).push(question);
 
         setNewQuestion('');

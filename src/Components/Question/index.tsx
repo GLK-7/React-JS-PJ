@@ -1,8 +1,11 @@
-import {ReactNode, useState} from 'react'
+import { FormEvent, ReactNode, useState } from 'react'
 import cx from 'classnames';
 
 import answerImg from '../../assets/images/answer.svg';
 import './styles.scss';
+import { useAuth } from '../../hooks/useAuth';
+import { useParams } from 'react-router-dom';
+import { database } from '../../services/firebase';
 
 type QuestionProps = {
     id: string;
@@ -16,6 +19,20 @@ type QuestionProps = {
     isHighLighted?: boolean;
 }
 
+// Criado
+type AnswerProps = {
+    id?: string;
+    content: string;
+    author:{
+        name: string;
+        avatar: string;
+    }
+}
+//criado
+type RoomParams = {
+    id: string;
+}
+
 export function Question({
     id,
     content,
@@ -24,16 +41,39 @@ export function Question({
     isHighLighted = false,
     children
 }: QuestionProps) {
+    const params = useParams<RoomParams>();
+    const roomId = params.id;
+
+    const { user } = useAuth();
     
     const [newAnswer, setNewAswer] = useState('');
     const [isAnswerOpen, setIsAnswerOpen] = useState(false);
 
-    async function handleAnswer(questionId: String) {
+    async function handleSendAnswer(event: FormEvent) {
+        event.preventDefault();
         
-    }
+        if (newAnswer.trim() === ''){
+            return;
+        }
 
+        if (!user){
+           throw new Error('You must be logged in')
+        }
+
+        const answer: AnswerProps = {
+            content: newAnswer,
+            author:{
+                name:user?.name,
+                avatar: user.avatar
+            }
+        }
+            
+        await database.ref(`rooms/${roomId}/questions/${id}/answers`).push(answer);
+        setNewAswer('');
+    }
+    
     return(
-        //Nesse caso foi usado a biblioteca classnames para a condicional
+        // Nesse caso foi usado a biblioteca classnames para a condicional
         <div className={cx(
                 'question',
                 { answered: isAnswered},
@@ -62,7 +102,7 @@ export function Question({
             <hr />
 
             { isAnswerOpen &&
-                <form>
+                <form onSubmit={handleSendAnswer}>
                     <textarea
                         placeholder="Qual a sua resposta?"
                         onChange={event => setNewAswer(event.target.value)}
@@ -71,7 +111,7 @@ export function Question({
                     />
 
                     <div className="form-answer-footer">                    
-                        <button>
+                        <button type='submit'>
                             Enviar resposta
                         </button>
                     </div>
@@ -80,3 +120,4 @@ export function Question({
         </div>
     )
 }
+
