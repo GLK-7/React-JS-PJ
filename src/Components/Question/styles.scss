@@ -132,10 +132,16 @@
         .user-info{ 
             
             span{
-                margin-left: 4px;
+                margin-left: 1px !important;
                 font-weight: 300;
                 font-size: 12px !important;
             }
+        }
+    }
+    form {
+        button {
+            font-size: 12px !important;
+            margin-bottom: 20px;
         }
     }
 }
