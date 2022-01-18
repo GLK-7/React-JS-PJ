@@ -137,3 +137,11 @@ main{
         margin-left: 16px;
     }
 }
+
+@media (max-width: 768px) {
+    #page-auth{
+        aside {
+            display: none;
+        }
+    }
+}

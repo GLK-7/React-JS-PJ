@@ -34,3 +34,20 @@
         cursor: not-allowed;
     }
 }
+
+
+@media (max-width: 768px) {
+    .buttonLogout{
+       
+        font-size: 12px;
+        padding: 0 20px;
+        height: 40px ;
+        
+        &.outlined{
+            background:#FFF;
+            border: 1px solid #835afd;
+            color: #835afd;
+        }
+    }
+    
+}

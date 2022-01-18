@@ -127,3 +127,15 @@
     }
     
 }
+@media (max-width: 768px) {
+    footer {
+        .user-info{ 
+            
+            span{
+                margin-left: 4px;
+                font-weight: 300;
+                font-size: 12px !important;
+            }
+        }
+    }
+}

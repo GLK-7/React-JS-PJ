@@ -90,7 +90,7 @@ export function Question({
 
             <footer>
                 <div className="user-info">
-                    <img src={author.avatar} alt={author.name} />
+                    <img title={author.name} src={author.avatar} alt={author.name} />
                     <span>{author.name}</span>
                 </div>
                 <div>
@@ -123,7 +123,11 @@ export function Question({
                 </form>
                 
             }
-            {answers && <span onClick={() => setIsAnswersOpen(!isAnswersOpen)}><span>Respostas ({answers.length})</span></span>}
+            {answers && <span onClick={() => setIsAnswersOpen(!isAnswersOpen)}>
+                
+                <span>{isAnswersOpen ? `Ocultar repostas (${answers.length})` : `Ver respostas (${answers.length})`}</span>
+            
+            </span>}
             
             { isAnswersOpen &&
 

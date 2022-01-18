@@ -94,7 +94,7 @@
                     }
                 }
 
-                 > span{
+                > span{
                     font-size: 14px;
                     color: #737380;
                     font-weight: 500;
@@ -124,4 +124,20 @@
     align-items: center;
     display: flex;
     gap: 0.7rem;
+}
+
+@media (max-width: 768px){
+    main {
+        .room-title {
+           
+            h1 {
+                font-size: 18px !important;
+            }
+
+            span {
+                font-weight: 500;
+                font-size: 12px !important;
+            }
+        }    
+    }
 }

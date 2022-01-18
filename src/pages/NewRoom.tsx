@@ -39,8 +39,8 @@ export function NewRoom(){
         <div id="page-auth">
             <aside>
                 <img src={illustrationImg} alt="Ilustracao simbolizando perguntas e respostas" />
-                <strong>Crie salas de Q&amp; A ao-vivo</strong>
-                <p>Tire as duvidas da sua audiencia em tempo-real</p>
+                <strong>Crie salas de Q&amp;A</strong>
+                <p>Tire as duvidas com seus professores e interaja com seus colegas</p>
             </aside>
             <main>
 
